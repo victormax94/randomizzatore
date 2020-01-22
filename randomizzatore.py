@@ -58,6 +58,18 @@ def encrypt(filename, key):
             file.write(encrypted_data)
 
 
+def decrypt(filename, key):
+
+    f = Fernet(key)
+    with open(filename, "rb") as file:
+        # read the encrypted data
+        encrypted_data = file.read()
+    # decrypt data
+    decrypted_data = f.decrypt(encrypted_data)
+    # write the original file
+    with open("decripted.py", "wb") as file:
+        file.write(decrypted_data)
+
 while start != end:
     hd.write(random.choice(randomArray))
     start += 1
@@ -66,8 +78,10 @@ hd.close()
 output = option.out
 bytecode = option.out + "c"
 
+
 encrypt("payload.py", write_key())
 
+decrypt("criptato", open("key.key").read())
 
 
 
